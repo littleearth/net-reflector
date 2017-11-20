@@ -1,0 +1,60 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{C7A384F3-F55C-48CD-B552-2FBA67469906}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="config\source\NetReflectorConfig.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="server\source\NetReflector.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="server\source\NetReflectorGUI.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="NetReflectorConfig">
+        <MSBuild Projects="config\source\NetReflectorConfig.dproj"/>
+    </Target>
+    <Target Name="NetReflectorConfig:Clean">
+        <MSBuild Projects="config\source\NetReflectorConfig.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="NetReflectorConfig:Make">
+        <MSBuild Projects="config\source\NetReflectorConfig.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="NetReflector">
+        <MSBuild Projects="server\source\NetReflector.dproj"/>
+    </Target>
+    <Target Name="NetReflector:Clean">
+        <MSBuild Projects="server\source\NetReflector.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="NetReflector:Make">
+        <MSBuild Projects="server\source\NetReflector.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="NetReflectorGUI">
+        <MSBuild Projects="server\source\NetReflectorGUI.dproj"/>
+    </Target>
+    <Target Name="NetReflectorGUI:Clean">
+        <MSBuild Projects="server\source\NetReflectorGUI.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="NetReflectorGUI:Make">
+        <MSBuild Projects="server\source\NetReflectorGUI.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="NetReflectorConfig;NetReflector;NetReflectorGUI"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="NetReflectorConfig:Clean;NetReflector:Clean;NetReflectorGUI:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="NetReflectorConfig:Make;NetReflector:Make;NetReflectorGUI:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>
