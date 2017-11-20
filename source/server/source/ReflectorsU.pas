@@ -5,8 +5,8 @@ interface
 uses
   System.Generics.Collections, System.IniFiles,
   Winapi.Windows, Winapi.Messages, Winapi.ShlObj, System.SysUtils,
-  System.Variants, System.Classes, IdBaseComponent, IdComponent,
-  IdCustomTCPServer, IdMappedPortTCP, IdUDPBase, IdUDPServer, IdMappedPortUDP,
+  System.Variants, System.Classes, IdBaseComponent,
+  IdMappedPortTCP, IdUDPBase, IdMappedPortUDP,
   IdSocketHandle, IdContext, ToolsU;
 
 type

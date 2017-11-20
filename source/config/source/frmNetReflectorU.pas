@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
   System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
-  System.ImageList, Vcl.ImgList, System.Actions, Vcl.ActnList, Vcl.ComCtrls,
+  System.Actions, Vcl.ActnList, Vcl.ComCtrls,
   Vcl.ToolWin, Vcl.StdCtrls, Vcl.Buttons, ReflectorsU, Vcl.Imaging.pngimage,
   Vcl.ExtCtrls, Vcl.Imaging.jpeg, HTMLCredit, System.UITypes;
 

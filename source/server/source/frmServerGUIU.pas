@@ -5,10 +5,10 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
   System.Classes, VCL.Graphics, VCL.Controls, VCL.Forms, VCL.Dialogs,
-  ReflectorsU, VCL.StdCtrls, VCL.Buttons, System.Actions, VCL.ActnList,
-  VCL.ToolWin, VCL.ComCtrls, IdContext, IdBaseComponent, IdComponent,
-  System.UITypes, IdCustomTCPServer, IdMappedPortTCP, VCL.ExtCtrls, ToolsU,
-  VCL.Imaging.jpeg;
+  ReflectorsU, VCL.Buttons, System.Actions, VCL.ActnList,
+  VCL.ComCtrls,
+  System.UITypes, VCL.ExtCtrls,
+  VCL.Imaging.jpeg, Vcl.ToolWin;
 
 type
   TfrmServerGUI = class(TForm)
@@ -46,7 +46,7 @@ implementation
 {$R *.dfm}
 
 uses
-  dmReflectorU, frmNetReflectorU;
+  frmNetReflectorU;
 
 procedure TfrmServerGUI.ActionConfigExecute(Sender: TObject);
 var

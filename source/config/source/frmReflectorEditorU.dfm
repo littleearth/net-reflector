@@ -94,12 +94,11 @@ object frmReflectorEditor: TfrmReflectorEditor
         AlignWithMargins = True
         Left = 3
         Top = 3
-        Width = 370
+        Width = 22
         Height = 13
         Align = alTop
         Caption = 'Host'
         Transparent = True
-        ExplicitWidth = 22
       end
       object editMappedHost: TEdit
         AlignWithMargins = True
@@ -189,12 +188,11 @@ object frmReflectorEditor: TfrmReflectorEditor
         AlignWithMargins = True
         Left = 3
         Top = 3
-        Width = 370
+        Width = 20
         Height = 13
         Align = alTop
         Caption = 'Port'
         Transparent = True
-        ExplicitWidth = 20
       end
       object editMappedPort: TEdit
         AlignWithMargins = True
@@ -221,12 +219,11 @@ object frmReflectorEditor: TfrmReflectorEditor
         AlignWithMargins = True
         Left = 3
         Top = 3
-        Width = 370
+        Width = 27
         Height = 13
         Align = alTop
         Caption = 'Name'
         Transparent = True
-        ExplicitWidth = 27
       end
       object editReflectorName: TEdit
         AlignWithMargins = True

@@ -3,9 +3,9 @@ unit ToolsU;
 interface
 
 uses
-  JwaShLWAPI, ComObj,
+  ComObj,
   Windows, Messages, SysUtils, Classes, VCL.Controls, VCL.Forms, VCL.Dialogs,
-  ShellAPI, SHFolder, DB, Variants, Printers, WinSpool, System.Win.Registry,
+  ShellAPI, SHFolder, DB, Variants, Printers, WinSpool,
   System.UITypes, VCL.Graphics;
 
 function IsEmptyString(AValue: string): boolean;

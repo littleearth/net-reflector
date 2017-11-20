@@ -4755,7 +4755,6 @@ object frmServerGUI: TfrmServerGUI
     ParentFont = True
     SimplePanel = True
     UseSystemFont = False
-    ExplicitTop = 530
   end
   object ActionList: TActionList
     Images = dmReflector.ImageListCommon
