@@ -17,8 +17,8 @@ A real world example
 
 Other examples
 
-    Testing development web services, 
-    - Keep 1 external port forward to a test machine but adjust
+    Testing development web services
+    - External port forward to a test machine but adjust
     - destination port for testing on your development machine
     RDP on another port, while also keeping port 3389 available.
     - Great for routers that have limited port forward abilities
