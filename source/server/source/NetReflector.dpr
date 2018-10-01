@@ -12,6 +12,7 @@ uses
 begin
   if not Application.DelayInitialize or Application.Installing then
     Application.Initialize;
+  Application.Title := 'NetReflectorService';
   Application.CreateForm(TNetReflectorService, NetReflectorService);
   Application.Run;
 

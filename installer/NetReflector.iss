@@ -19,7 +19,7 @@
 #define ConstAppMutex "NetReflectorConfig"
 #define ConstAppDescription "NetReflector"
 #define ConstAppPublisher "Little Earth Solutions"
-#define ConstAppCopyright "Copyright (C) 2017 Little Earth Solutions"
+#define ConstAppCopyright "Copyright (C) 2018 Little Earth Solutions"
 #define ConstAppURL "https://www.littleearthsolutions.net/"
 #define ConstAppExeName "NetReflector.exe"
 #define ConstAppServiceName "NetReflectorService"

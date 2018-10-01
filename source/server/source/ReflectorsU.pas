@@ -3,14 +3,14 @@ unit ReflectorsU;
 interface
 
 uses
-  System.Generics.Collections, System.IniFiles,
-  Winapi.Windows, Winapi.Messages, Winapi.ShlObj, System.SysUtils,
-  System.Variants, System.Classes, IdBaseComponent,
-  IdMappedPortTCP, IdUDPBase, IdMappedPortUDP,
-  IdSocketHandle, IdContext, ToolsU;
+  System.Generics.Collections, System.IniFiles, Winapi.Windows, Winapi.Messages,
+  Winapi.ShlObj, System.SysUtils, System.Variants, System.Classes,
+  IdBaseComponent, IdMappedPortTCP, IdUDPBase, IdMappedPortUDP, IdSocketHandle,
+  IdContext, ToolsU;
 
 type
   EReflectorException = class(Exception);
+
   TReflectorType = (refTCP, refUDP);
 
 type
@@ -60,11 +60,19 @@ type
   private
     FIdMappedPortTCP: TIdMappedPortTCP;
     FIdMappedPortUDP: TIdMappedPortUDP;
+    FLogFile: TFileName;
+    procedure RotateFile(AFileName: TFileName; AMaxRotations: integer = 5);
+    function IsLogRotationRequired(AFileName: TFileName): boolean;
+    function GetLogFolder: string;
   protected
     property IdMappedPortTCP: TIdMappedPortTCP read FIdMappedPortTCP;
     property IdMappedPortUDP: TIdMappedPortUDP read FIdMappedPortUDP;
     procedure IdMappedPortConnect(AContext: TIdContext);
     procedure IdMappedPortDisconnect(AContext: TIdContext);
+    procedure Log(AMessage: string; APrefix: string = 'LOG');
+    procedure Error(AMessage: string); overload;
+    procedure Error(AException: Exception; AMessage: string = ''); overload;
+    procedure Warning(AMessage: string);
   public
     constructor Create; reintroduce;
     destructor Destroy; override;
@@ -73,6 +81,7 @@ type
   end;
 
   TReflectorList = TObjectList<TReflector>;
+
   TReflectorSettingsList = TObjectList<TReflectorSettings>;
 
   TReflectors = class(TComponent)
@@ -99,6 +108,9 @@ type
   end;
 
 implementation
+
+uses
+  System.DateUtils;
 
 { TReflectors }
 
@@ -147,7 +159,7 @@ begin
   FReflectorSettingsList.Clear;
   try
     LINIFile.ReadSection('Reflectors', LSettingsList);
-    For LIdx := 0 to Pred(LSettingsList.Count) do
+    for LIdx := 0 to Pred(LSettingsList.Count) do
     begin
       LReflectorSettings := TReflectorSettings.Create;
       LReflectorSettings.ReflectorName := LSettingsList[LIdx];
@@ -228,7 +240,7 @@ var
 begin
   Result := false;
   try
-    For LIdx := 0 to Pred(FReflectorList.Count) do
+    for LIdx := 0 to Pred(FReflectorList.Count) do
     begin
       FReflectorList[LIdx].Stop;
     end;
@@ -237,7 +249,7 @@ begin
   except
     on E: Exception do
     begin
-      //Error(E);
+      // Error(E);
     end;
   end;
 end;
@@ -258,16 +270,132 @@ begin
   end;
 end;
 
+procedure TReflector.Error(AException: Exception; AMessage: string);
+begin
+  Log(AException.Message + ', Message: ' + AMessage, 'ERROR');
+end;
+
+procedure TReflector.Error(AMessage: string);
+begin
+  Log(AMessage, 'ERROR');
+end;
+
 procedure TReflector.IdMappedPortConnect(AContext: TIdContext);
 begin
-  // Log('Connect: ' + AContext.Binding.PeerIP + ': ' +
-  // IntToStr(AContext.Binding.PeerPort));
+  Log('Connect: ' + AContext.Binding.PeerIP + ': ' +
+    IntToStr(AContext.Binding.PeerPort));
 end;
 
 procedure TReflector.IdMappedPortDisconnect(AContext: TIdContext);
 begin
-  // Log('Disconnect: ' + AContext.Binding.PeerIP + ': ' +
-  // IntToStr(AContext.Binding.PeerPort));
+  Log('Disconnect: ' + AContext.Binding.PeerIP + ': ' +
+    IntToStr(AContext.Binding.PeerPort));
+end;
+
+function TReflector.GetLogFolder: string;
+begin
+  Result := IncludeTrailingPathDelimiter
+    (GetShellFolderPath(CSIDL_COMMON_APPDATA));
+  Result := IncludeTrailingPathDelimiter(Result + 'NetReflector');
+  Result := IncludeTrailingPathDelimiter(Result + 'log');
+  CheckDirectoryExists(Result, True);
+end;
+
+function TReflector.IsLogRotationRequired(AFileName: TFileName): boolean;
+const
+  MaxLogFileSize = 1048576;
+var
+  LFileSize: Int64;
+begin
+  Result := false;
+  if FileExists(AFileName) then
+  begin
+    LFileSize := ToolsU.GetFileSize(AFileName);
+    Result := LFileSize >= MaxLogFileSize;
+  end;
+end;
+
+procedure TReflector.RotateFile(AFileName: TFileName; AMaxRotations: integer);
+var
+  LIdx: integer;
+  LFileName: TFileName;
+  ANewFileName: TFileName;
+begin
+  try
+    for LIdx := AMaxRotations downto 1 do
+    begin
+      LFileName := AFileName + '.' + IntToStr(LIdx);
+      if FileExists(LFileName) then
+      begin
+        if LIdx < AMaxRotations then
+        begin
+          ANewFileName := ChangeFileExt(LFileName, '.' + IntToStr(LIdx + 1));
+          RenameFile(LFileName, ANewFileName);
+        end
+        else
+        begin
+          DeleteFile(LFileName);
+        end;
+      end;
+    end;
+
+    LFileName := AFileName;
+    if FileExists(LFileName) then
+    begin
+      ANewFileName := LFileName + '.1';
+      RenameFile(LFileName, ANewFileName);
+    end;
+  except
+    on E: Exception do
+    begin
+
+    end;
+  end;
+end;
+
+procedure TReflector.Log(AMessage, APrefix: string);
+var
+  LLogFile: TextFile;
+  LFolder, LMessage: string;
+begin
+  try
+    LFolder := ExtractFilePath(FLogFile);
+    LMessage := Format('%s|%s|%s', [FormatDateTime('yyyymmddhhnnss', Now),
+      APrefix, AMessage]);
+    LMessage := StripExtraSpaces(LMessage, True, True);
+    if CheckDirectoryExists(LFolder, True) then
+    begin
+      if IsLogRotationRequired(FLogFile) then
+      begin
+        RotateFile(FLogFile);
+      end;
+      AssignFile(LLogFile, FLogFile);
+      if FileExists(FLogFile) then
+      begin
+        Append(LLogFile);
+      end
+      else
+      begin
+        Rewrite(LLogFile);
+      end;
+
+      WriteLn(LLogFile, LMessage);
+
+      Flush(LLogFile);
+      CloseFile(LLogFile);
+    end
+    else
+    begin
+      raise EReflectorException.CreateFmt('Failed to create log file "%s"',
+        [LFolder]);
+    end;
+  except
+    on E: Exception do
+    begin
+      OutputDebugString(PChar(E.Message + ', LogFile: ' + FLogFile +
+        ', Message:' + LMessage));
+    end;
+  end;
 end;
 
 function TReflector.Start(AReflectorSettings: TReflectorSettings): boolean;
@@ -276,6 +404,9 @@ var
 begin
   Result := false;
   try
+    FLogFile := GetLogFolder + ValidateFileName(AReflectorSettings.ReflectorName
+      + '.log');
+    Log('Starting ' + AReflectorSettings.ReflectorName);
     case AReflectorSettings.ReflectorType of
       refTCP:
         begin
@@ -286,7 +417,7 @@ begin
           FIdMappedPortTCP.MappedPort := AReflectorSettings.MappedPort;
           if AReflectorSettings.Bindings.Count > 0 then
           begin
-            For LIdx := 0 to Pred(AReflectorSettings.Bindings.Count) do
+            for LIdx := 0 to Pred(AReflectorSettings.Bindings.Count) do
             begin
               with FIdMappedPortTCP.Bindings.Add do
               begin
@@ -313,7 +444,7 @@ begin
           FIdMappedPortUDP.MappedPort := AReflectorSettings.MappedPort;
           if AReflectorSettings.Bindings.Count > 0 then
           begin
-            For LIdx := 0 to Pred(AReflectorSettings.Bindings.Count) do
+            for LIdx := 0 to Pred(AReflectorSettings.Bindings.Count) do
             begin
               with FIdMappedPortUDP.Bindings.Add do
               begin
@@ -337,7 +468,7 @@ begin
   except
     on E: Exception do
     begin
-     // Error(E);
+      Error(E.Message);
     end;
   end;
 end;
@@ -359,9 +490,14 @@ begin
   except
     on E: Exception do
     begin
-     // Error(E);
+      Error(E.Message);
     end;
   end;
+end;
+
+procedure TReflector.Warning(AMessage: string);
+begin
+  Log(AMessage, 'WARNING');
 end;
 
 { TReflectorSettings }
@@ -408,7 +544,7 @@ begin
       FMappedPort := AINIFile.ReadInteger(FReflectorName, 'MappedPort', 0);
       FMappedHost := AINIFile.ReadString(FReflectorName, 'MappedHost', '');
       AINIFile.ReadSection(FReflectorName + '.Bindings', LBindingSections);
-      For LIdx := 0 to Pred(LBindingSections.Count) do
+      for LIdx := 0 to Pred(LBindingSections.Count) do
       begin
         LBinding := TReflectorBinding.Create;
         LBinding.IP := AINIFile.ReadString(LBindingSections[LIdx], 'IP',
@@ -453,7 +589,7 @@ begin
     AINIFile.WriteInteger(FReflectorName, 'MappedPort', FMappedPort);
     AINIFile.WriteString(FReflectorName, 'MappedHost', FMappedHost);
     AINIFile.EraseSection(FReflectorName + '.Bindings');
-    For LIdx := 0 to Pred(FReflectorBindings.Count) do
+    for LIdx := 0 to Pred(FReflectorBindings.Count) do
     begin
       LBindingSectionName := FReflectorName + '.Bindings' + '.' +
         IntToStr(LIdx);

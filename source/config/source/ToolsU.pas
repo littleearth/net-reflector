@@ -11,18 +11,24 @@ uses
 function IsEmptyString(AValue: string): boolean;
 function StripExtraSpaces(AValue: string; ARemoveTab: boolean = False;
   ARemoveCRLF: boolean = False): string;
+function StripCharsInSet(const AValue: string; ACharset: TSysCharSet): string;
 
-function IsFontInstalled(const AFontName: string): boolean;
-
+function GetUserAppDataDir: string;
 function GetShellFolderPath(AFolder: integer): string;
 function CheckDirectoryExists(ADirectory: string; ACreate: boolean): boolean;
+function ExecuteFile(const Operation, FileName, Params, DefaultDir: string;
+  ShowCmd: word): integer;
+function ValidateFileName(AFileName: TFileName): TFileName;
+function GetFileSize(const AFileName: string): int64;
 
 procedure GetNetworkIPList(AList: TStrings);
+
+function IsFontInstalled(const AFontName: string): boolean;
 
 implementation
 
 uses
-  IdStack;
+  IdStack, Winapi.ShlObj;
 
 function IsFontInstalled(const AFontName: string): boolean;
 begin
@@ -103,6 +109,62 @@ begin
   end;
 end;
 
+function GetUserAppDataDir: string;
+begin
+  Result := IncludeTrailingPathDelimiter
+    (IncludeTrailingPathDelimiter(GetShellFolderPath(CSIDL_APPDATA)) +
+    Application.Title);
+  CheckDirectoryExists(Result, true);
+end;
+
+function ExecuteFile(const Operation, FileName, Params, DefaultDir: string;
+  ShowCmd: word): integer;
+var
+  zFileName, zParams, zDir: array [0 .. 255] of char;
+begin
+  Result := ShellExecute(Application.Handle, PChar(Operation),
+    StrPCopy(zFileName, FileName), StrPCopy(zParams, Params),
+    StrPCopy(zDir, DefaultDir), ShowCmd);
+end;
+
+function StripCharsInSet(const AValue: string; ACharset: TSysCharSet): string;
+var
+  i: integer;
+begin
+  for i := 1 to Length(AValue) do
+  begin
+    if not CharInSet(AValue[i], ACharset) then
+      Result := Result + AValue[i];
+  end;
+end;
+
+function ValidateFileName(AFileName: TFileName): TFileName;
+begin
+  Result := AFileName;
+  Result := StripExtraSpaces(Result, true, true);
+  Result := StripCharsInSet(Result, ['\', '/', ':', '*', '?', '"', '<',
+    '>', '|']);
+end;
+
+function GetFileSize(const AFileName: string): int64;
+var
+  Handle: THandle;
+  FindData: TWin32FindData;
+begin
+  Handle := FindFirstFile(PChar(AFileName), FindData);
+  if Handle <> INVALID_HANDLE_VALUE then
+  begin
+    Windows.FindClose(Handle);
+    if (FindData.dwFileAttributes and FILE_ATTRIBUTE_DIRECTORY) = 0 then
+    begin
+      Int64Rec(Result).Lo := FindData.nFileSizeLow;
+      Int64Rec(Result).Hi := FindData.nFileSizeHigh;
+      Exit;
+    end;
+  end;
+  Result := -1;
+end;
+
 procedure GetNetworkIPList(AList: TStrings);
 var
   Lidx: integer;
@@ -114,7 +176,7 @@ begin
     begin
       for Lidx := 0 to Pred(GStack.LocalAddresses.Count) do
       begin
-        LAddress := StripExtraSpaces(GStack.LocalAddresses[Lidx], True, True);
+        LAddress := StripExtraSpaces(GStack.LocalAddresses[Lidx], true, true);
         if not IsEmptyString(LAddress) then
           AList.Add(LAddress);
       end;

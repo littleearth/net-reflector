@@ -1,7 +1,7 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
         <ProjectGuid>{DBCD96B6-25AF-494F-A57A-7FB01C600060}</ProjectGuid>
-        <ProjectVersion>18.2</ProjectVersion>
+        <ProjectVersion>18.4</ProjectVersion>
         <FrameworkType>VCL</FrameworkType>
         <MainSource>NetReflectorGUI.dpr</MainSource>
         <Base>True</Base>
@@ -62,7 +62,7 @@ $(PostBuildEvent)]]></PostBuildEvent>
         <DCC_K>false</DCC_K>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
-        <VerInfo_Keys>FileVersion=1.0.0.0;OriginalFilename=NetReflectorGUI.exe;ProductVersion=1.0.0.0;ProductName=Net Reflector;CompanyName=Little Earth Solutions;Comments=TCP and UDP port reflector;InternalName=Net Reflector;LegalCopyright=Copyright Little Earth Solutions 2017;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName)</VerInfo_Keys>
+        <VerInfo_Keys>FileVersion=1.0.1.0;OriginalFilename=NetReflectorGUI.exe;ProductVersion=1.0.0.0;ProductName=Net Reflector;CompanyName=Little Earth Solutions;Comments=TCP and UDP port reflector;InternalName=Net Reflector;LegalCopyright=Copyright Little Earth Solutions 2018;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName)</VerInfo_Keys>
         <DCC_UsePackage>DBXSqliteDriver;RESTComponents;DataSnapServerMidas;DBXDb2Driver;DBXInterBaseDriver;GMLib_Berlin_VCL;ZComponent;vclactnband;ZCore;vclFireDAC;FlexCel_Pdf;FMX_FlexCel_Core;emsclientfiredac;DataSnapFireDAC;svnui;tethering;JvGlobus;FireDACADSDriver;NukeObjectFMXBerlin;JvPluginSystem;DBXMSSQLDriver;JvMM;OrpheusDR;DatasnapConnectorsFreePascal;FireDACMSSQLDriver;vcltouch;JvBands;vcldb;bindcompfmx;svn;JvJans;DBXOracleDriver;JvNet;Rave110VCL;inetdb;JvAppFrm;fgxD10;GMLib_Berlin;VirtualTreesDR;FlexCel_Report;RentalManagerDataObjects;FmxTeeUI;emsedge;JvDotNetCtrls;FireDACIBDriver;fmx;fmxdae;VCL_FlexCel_Components;frx24;vclib;NukeObjectsCommonBerlin;JvWizards;FireDACDBXDriver;dbexpress;IndyCore;GMLib_Berlin_FMX;OrpheusDBDR;tmsexdXE10;vclx;ZParseSql;JvPageComps;dsnap;DataSnapCommon;emsclient;PJMSDataObjects;FireDACCommon;JvDB;RESTBackendComponents;DataSnapConnectors;VCLRESTComponents;soapserver;JclDeveloperTools;vclie;bindengine;DBXMySQLDriver;FireDACOracleDriver;CloudService;FireDACMySQLDriver;DBXFirebirdDriver;JvCmp;JvHMI;FireDACCommonODBC;FireDACCommonDriver;KControls_RXE8;DataSnapClient;IWBootstrapD101;inet;bindcompdbx;IndyIPCommon;JvCustom;vcl;DBXSybaseASEDriver;IndyIPServer;JvXPCtrls;Intraweb_14_D10_1;IndySystem;FireDACDb2Driver;tmsxlsdXE10;dsnapcon;FireDACMSAccDriver;fmxFireDAC;FireDACInfxDriver;vclimg;ZDbc;TeeDB;FireDAC;Jcl;madBasic_;JvCore;emshosting;FlexCel_XlsAdapter;JvCrypt;FireDACSqliteDriver;FireDACPgDriver;ibmonitor;FireDACASADriver;ChromeTabs_R;DBXOdbcDriver;FireDACTDataDriver;FMXTee;soaprtl;DbxCommonDriver;JvDlgs;JvRuntimeDesign;ibxpress;Tee;JvManagedThreads;DataSnapServer;xmlrtl;soapmidas;DataSnapNativeClient;fmxobj;vclwinx;ibxbindings;rtl;FireDACDSDriver;DbxClientDriver;JvTimeFramework;DBXSybaseASADriver;frxTee24;CustomIPTransport;vcldsnap;office2010rt;JvSystem;JvStdCtrls;DOSCommandDR;SynEditDR;FlexCel_Core;bindcomp;appanalytics;ZPlain;DBXInformixDriver;tmswizdXE10;IndyIPClient;bindcompvcl;TeeUI;frxe24;XEROAPID101;FMX_FlexCel_Components;JvDocking;dbxcds;VclSmp;JvPascalInterpreter;adortl;FireDACODBCDriver;VCL_FlexCel_Core;FlexCel_Render;JclVcl;DataSnapIndy10ServerTransport;ServiceSchedulerDataObjects;EmbeddedWebBrowser_Berlin;frxDB24;NukeObjectVCLBerlin;dsnapxml;DataSnapProviderClient;dbrtl;inetdbxpress;FireDACMongoDBDriver;IndyProtocols;JvControls;JvPrintPreview;JclContainers;tmsdXE10;fmxase;$(DCC_UsePackage)</DCC_UsePackage>
         <Icon_MainIcon>NetReflector.ico</Icon_MainIcon>
         <VerInfo_Locale>1033</VerInfo_Locale>
@@ -72,6 +72,7 @@ $(PostBuildEvent)]]></PostBuildEvent>
         <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
         <UWP_DelphiLogo44>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_44.png</UWP_DelphiLogo44>
         <UWP_DelphiLogo150>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_150.png</UWP_DelphiLogo150>
+        <VerInfo_Release>1</VerInfo_Release>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win64)'!=''">
         <DCC_UsePackage>DBXSqliteDriver;RESTComponents;DataSnapServerMidas;DBXDb2Driver;DBXInterBaseDriver;GMLib_Berlin_VCL;ZComponent;vclactnband;ZCore;vclFireDAC;FlexCel_Pdf;FMX_FlexCel_Core;emsclientfiredac;DataSnapFireDAC;tethering;FireDACADSDriver;DBXMSSQLDriver;OrpheusDR;DatasnapConnectorsFreePascal;FireDACMSSQLDriver;vcltouch;vcldb;bindcompfmx;DBXOracleDriver;inetdb;GMLib_Berlin;VirtualTreesDR;FlexCel_Report;FmxTeeUI;emsedge;FireDACIBDriver;fmx;fmxdae;VCL_FlexCel_Components;vclib;FireDACDBXDriver;dbexpress;IndyCore;GMLib_Berlin_FMX;OrpheusDBDR;tmsexdXE10;vclx;ZParseSql;dsnap;DataSnapCommon;emsclient;FireDACCommon;RESTBackendComponents;DataSnapConnectors;VCLRESTComponents;soapserver;vclie;bindengine;DBXMySQLDriver;FireDACOracleDriver;CloudService;FireDACMySQLDriver;DBXFirebirdDriver;FireDACCommonODBC;FireDACCommonDriver;DataSnapClient;inet;bindcompdbx;IndyIPCommon;vcl;DBXSybaseASEDriver;IndyIPServer;IndySystem;FireDACDb2Driver;dsnapcon;FireDACMSAccDriver;fmxFireDAC;FireDACInfxDriver;vclimg;ZDbc;TeeDB;FireDAC;emshosting;FlexCel_XlsAdapter;FireDACSqliteDriver;FireDACPgDriver;ibmonitor;FireDACASADriver;ChromeTabs_R;DBXOdbcDriver;FireDACTDataDriver;FMXTee;soaprtl;DbxCommonDriver;ibxpress;Tee;DataSnapServer;xmlrtl;soapmidas;DataSnapNativeClient;fmxobj;vclwinx;ibxbindings;rtl;FireDACDSDriver;DbxClientDriver;DBXSybaseASADriver;CustomIPTransport;vcldsnap;office2010rt;DOSCommandDR;SynEditDR;FlexCel_Core;bindcomp;appanalytics;ZPlain;DBXInformixDriver;IndyIPClient;bindcompvcl;TeeUI;FMX_FlexCel_Components;dbxcds;VclSmp;adortl;FireDACODBCDriver;VCL_FlexCel_Core;FlexCel_Render;DataSnapIndy10ServerTransport;dsnapxml;DataSnapProviderClient;dbrtl;inetdbxpress;FireDACMongoDBDriver;IndyProtocols;tmsdXE10;fmxase;$(DCC_UsePackage)</DCC_UsePackage>
@@ -87,12 +88,16 @@ $(PostBuildEvent)]]></PostBuildEvent>
         <DCC_RemoteDebug>true</DCC_RemoteDebug>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
-        <VerInfo_Keys>FileVersion=1.0.0.0;OriginalFilename=NetReflectorGUI.exe;ProductVersion=1.0.0.0;ProductName=Net Reflector;CompanyName=Little Earth Solutions;Comments=TCP and UDP port reflector;InternalName=Net Reflector;LegalCopyright=Copyright Little Earth Solutions 2017;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName)</VerInfo_Keys>
+        <VerInfo_Keys>FileVersion=1.0.1.0;OriginalFilename=NetReflectorGUI.exe;ProductVersion=1.0.0.0;ProductName=Net Reflector;CompanyName=Little Earth Solutions;Comments=TCP and UDP port reflector;InternalName=Net Reflector;LegalCopyright=Copyright Little Earth Solutions 2018;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName)</VerInfo_Keys>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Icon_MainIcon>NetReflector.ico</Icon_MainIcon>
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
+        <VerInfo_Release>1</VerInfo_Release>
+        <BT_BuildType>Debug</BT_BuildType>
+        <DCC_MapFile>3</DCC_MapFile>
+        <AppExecutionLevel>requireAdministrator</AppExecutionLevel>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -101,7 +106,7 @@ $(PostBuildEvent)]]></PostBuildEvent>
         <DCC_DebugInformation>0</DCC_DebugInformation>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
-        <VerInfo_Keys>FileVersion=1.0.0.0;OriginalFilename=NetReflectorGUI.exe;ProductVersion=1.0.0.0;ProductName=Net Reflector;CompanyName=Little Earth Solutions;Comments=TCP and UDP port reflector;InternalName=Net Reflector;LegalCopyright=Copyright Little Earth Solutions 2017;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName)</VerInfo_Keys>
+        <VerInfo_Keys>FileVersion=1.0.1.0;OriginalFilename=NetReflectorGUI.exe;ProductVersion=1.0.0.0;ProductName=Net Reflector;CompanyName=Little Earth Solutions;Comments=TCP and UDP port reflector;InternalName=Net Reflector;LegalCopyright=Copyright Little Earth Solutions 2018;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName)</VerInfo_Keys>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Icon_MainIcon>NetReflector.ico</Icon_MainIcon>
@@ -109,6 +114,7 @@ $(PostBuildEvent)]]></PostBuildEvent>
         <BT_BuildType>Debug</BT_BuildType>
         <AppExecutionLevel>requireAdministrator</AppExecutionLevel>
         <DCC_MapFile>3</DCC_MapFile>
+        <VerInfo_Release>1</VerInfo_Release>
     </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">
@@ -154,8 +160,10 @@ $(PostBuildEvent)]]></PostBuildEvent>
                     <Source Name="MainSource">NetReflectorGUI.dpr</Source>
                 </Source>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k240.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp240.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k250.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp250.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\19.0\Bpl\LockBox3VCLDD250.bpl">TurboPack LockBox 3 VCL designtime package</Excluded_Packages>
+                    <Excluded_Packages Name="D:\Development\Components\TMS\FlexCelVCLNT\Packages\dTokyo\bpl\Win32\VCL_FlexCel_Components_DESIGN250.bpl">FlexCel Visual Components for VCL (Design)</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
@@ -602,7 +610,7 @@ $(PostBuildEvent)]]></PostBuildEvent>
         <PreBuildEventIgnoreExitCode>False</PreBuildEventIgnoreExitCode>
         <PreLinkEvent/>
         <PreLinkEventIgnoreExitCode>False</PreLinkEventIgnoreExitCode>
-        <PostBuildEvent>post-build.cmd &quot;$(OutputDir)&quot; $(Platform) $(Config)</PostBuildEvent>
+        <PostBuildEvent>post-build.cmd &quot;$(OutputDir)&quot; $(Platform) $(Config)</PostBuildEvent>
         <PostBuildEventIgnoreExitCode>False</PostBuildEventIgnoreExitCode>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Debug' And '$(Platform)'=='Win64'">
@@ -610,7 +618,7 @@ $(PostBuildEvent)]]></PostBuildEvent>
         <PreBuildEventIgnoreExitCode>False</PreBuildEventIgnoreExitCode>
         <PreLinkEvent/>
         <PreLinkEventIgnoreExitCode>False</PreLinkEventIgnoreExitCode>
-        <PostBuildEvent>post-build.cmd &quot;$(OutputDir)&quot; $(Platform) $(Config)</PostBuildEvent>
+        <PostBuildEvent>post-build.cmd &quot;$(OutputDir)&quot; $(Platform) $(Config)</PostBuildEvent>
         <PostBuildEventIgnoreExitCode>False</PostBuildEventIgnoreExitCode>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Release' And '$(Platform)'=='Win32'">
@@ -618,7 +626,7 @@ $(PostBuildEvent)]]></PostBuildEvent>
         <PreBuildEventIgnoreExitCode>False</PreBuildEventIgnoreExitCode>
         <PreLinkEvent/>
         <PreLinkEventIgnoreExitCode>False</PreLinkEventIgnoreExitCode>
-        <PostBuildEvent>post-build.cmd &quot;$(OutputDir)&quot; $(Platform) $(Config)</PostBuildEvent>
+        <PostBuildEvent>post-build.cmd &quot;$(OutputDir)&quot; $(Platform) $(Config)</PostBuildEvent>
         <PostBuildEventIgnoreExitCode>False</PostBuildEventIgnoreExitCode>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Release' And '$(Platform)'=='Win64'">
@@ -626,7 +634,7 @@ $(PostBuildEvent)]]></PostBuildEvent>
         <PreBuildEventIgnoreExitCode>False</PreBuildEventIgnoreExitCode>
         <PreLinkEvent/>
         <PreLinkEventIgnoreExitCode>False</PreLinkEventIgnoreExitCode>
-        <PostBuildEvent>post-build.cmd &quot;$(OutputDir)&quot; $(Platform) $(Config)</PostBuildEvent>
+        <PostBuildEvent>post-build.cmd &quot;$(OutputDir)&quot; $(Platform) $(Config)</PostBuildEvent>
         <PostBuildEventIgnoreExitCode>False</PostBuildEventIgnoreExitCode>
     </PropertyGroup>
 </Project>

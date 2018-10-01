@@ -42,6 +42,7 @@ begin
   end;
 
   Application.MainFormOnTaskbar := True;
+  Application.Title := 'NetReflector';
   Application.CreateForm(TfrmNetReflector, frmNetReflector);
   Application.CreateForm(TdmReflector, dmReflector);
   Application.Run;

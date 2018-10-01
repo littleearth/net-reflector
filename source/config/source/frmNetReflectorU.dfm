@@ -18,16 +18,12 @@ object frmNetReflector: TfrmNetReflector
     Top = 0
     Width = 585
     Height = 430
-    ActivePage = tabAbout
+    ActivePage = tabGeneral
     Align = alClient
     TabOrder = 0
     OnChange = PageControlReflectorsChange
     object tabGeneral: TTabSheet
       Caption = 'General'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object imgLogo: TImage
         Left = 0
         Top = 72
