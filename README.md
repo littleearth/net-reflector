@@ -7,18 +7,21 @@ This tool is great for server migrations allow you to migrate services, and eith
 
 A real world example
 
-    Install MySQL on new server migrate
+    Install MySQL on new server
     Migrate database
     Stop old server MySQL service
-    Install Netflector and configure port 3306- New server
-    Clients will contnue to function
+    Install NetReflector and configure port 3306 on old server to New server
+    Clients will continue to function
     Upgrade client configurations
-    Remove reflector
+    Remove NetReflector
 
 Other examples
 
-    Testing development web services, keep 1 external port forward to a test machine but adjust destination port for testing
-    RDP on another port, while also keeping port 3389 available. Great for routers that have limited port forward abilities
+    Testing development web services, 
+    - Keep 1 external port forward to a test machine but adjust
+    - destination port for testing on your development machine
+    RDP on another port, while also keeping port 3389 available.
+    - Great for routers that have limited port forward abilities
 
 
 Installation Downloads
