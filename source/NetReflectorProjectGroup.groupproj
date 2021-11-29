@@ -1,15 +1,15 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
-        <ProjectGuid>{C7A384F3-F55C-48CD-B552-2FBA67469906}</ProjectGuid>
+        <ProjectGuid>{CF5BC2A4-CF78-49EE-9407-9BB7BA256C93}</ProjectGuid>
     </PropertyGroup>
     <ItemGroup>
-        <Projects Include="config\source\NetReflectorConfig.dproj">
+        <Projects Include="config\NetReflectorConfig.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="server\source\NetReflector.dproj">
+        <Projects Include="server\NetReflector.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="server\source\NetReflectorGUI.dproj">
+        <Projects Include="server\NetReflectorGUI.dproj">
             <Dependencies/>
         </Projects>
     </ItemGroup>
@@ -21,31 +21,31 @@
         </BorlandProject>
     </ProjectExtensions>
     <Target Name="NetReflectorConfig">
-        <MSBuild Projects="config\source\NetReflectorConfig.dproj"/>
+        <MSBuild Projects="config\NetReflectorConfig.dproj"/>
     </Target>
     <Target Name="NetReflectorConfig:Clean">
-        <MSBuild Projects="config\source\NetReflectorConfig.dproj" Targets="Clean"/>
+        <MSBuild Projects="config\NetReflectorConfig.dproj" Targets="Clean"/>
     </Target>
     <Target Name="NetReflectorConfig:Make">
-        <MSBuild Projects="config\source\NetReflectorConfig.dproj" Targets="Make"/>
+        <MSBuild Projects="config\NetReflectorConfig.dproj" Targets="Make"/>
     </Target>
     <Target Name="NetReflector">
-        <MSBuild Projects="server\source\NetReflector.dproj"/>
+        <MSBuild Projects="server\NetReflector.dproj"/>
     </Target>
     <Target Name="NetReflector:Clean">
-        <MSBuild Projects="server\source\NetReflector.dproj" Targets="Clean"/>
+        <MSBuild Projects="server\NetReflector.dproj" Targets="Clean"/>
     </Target>
     <Target Name="NetReflector:Make">
-        <MSBuild Projects="server\source\NetReflector.dproj" Targets="Make"/>
+        <MSBuild Projects="server\NetReflector.dproj" Targets="Make"/>
     </Target>
     <Target Name="NetReflectorGUI">
-        <MSBuild Projects="server\source\NetReflectorGUI.dproj"/>
+        <MSBuild Projects="server\NetReflectorGUI.dproj"/>
     </Target>
     <Target Name="NetReflectorGUI:Clean">
-        <MSBuild Projects="server\source\NetReflectorGUI.dproj" Targets="Clean"/>
+        <MSBuild Projects="server\NetReflectorGUI.dproj" Targets="Clean"/>
     </Target>
     <Target Name="NetReflectorGUI:Make">
-        <MSBuild Projects="server\source\NetReflectorGUI.dproj" Targets="Make"/>
+        <MSBuild Projects="server\NetReflectorGUI.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
         <CallTarget Targets="NetReflectorConfig;NetReflector;NetReflectorGUI"/>

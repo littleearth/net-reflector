@@ -22,211 +22,486 @@
 // [Code]
 // #include "scripts\services.iss"
 
-
+// -----------------------------------------------------------------------------------------------------------
+// Services functions for InnoSetup 5.x
+// Modified bt Abit Systems
+//
+// The contents of this file are subject to the Mozilla Public License
+// Version 1.1 (the "License"); you may not use this file except in
+// compliance with the License. You may obtain a copy of the License at
+// http://www.mozilla.org/MPL/
+//
+// Software distributed under the License is distributed on an "AS IS"
+// basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+// License for the specific language governing rights and limitations
+// under the License.
+//
+// The Original Code is services.iss.
+//
+// The Initial Developer of the Original Code is Luigi D. Sandon
+// Copyright © 2006-2010 Luigi D. Sandon. All Rights Reserved.
+// -----------------------------------------------------------------------------------------------------------
 
 type
-	SERVICE_STATUS = record
-    	dwServiceType				: cardinal;
-    	dwCurrentState				: cardinal;
-    	dwControlsAccepted			: cardinal;
-    	dwWin32ExitCode				: cardinal;
-    	dwServiceSpecificExitCode	: cardinal;
-    	dwCheckPoint				: cardinal;
-    	dwWaitHint					: cardinal;
-	end;
-	HANDLE = cardinal;
+  _SERVICE_STATUS = record
+    dwServiceType: Longword;
+    dwCurrentState: Longword;
+    dwControlsAccepted: Longword;
+    dwWin32ExitCode: Longword;
+    dwServiceSpecificExitCode: Longword;
+    dwCheckPoint: Longword;
+    dwWaitHint: Longword;
+  end;
 
 const
-	SERVICE_QUERY_CONFIG		= $1;
-	SERVICE_CHANGE_CONFIG		= $2;
-	SERVICE_QUERY_STATUS		= $4;
-	SERVICE_START				= $10;
-	SERVICE_STOP				= $20;
-	SERVICE_ALL_ACCESS			= $f01ff;
-	SC_MANAGER_ALL_ACCESS		= $f003f;
-	SERVICE_WIN32_OWN_PROCESS	= $10;
-	SERVICE_WIN32_SHARE_PROCESS	= $20;
-	SERVICE_WIN32				= $30;
-	SERVICE_INTERACTIVE_PROCESS = $100;
-	SERVICE_BOOT_START          = $0;
-	SERVICE_SYSTEM_START        = $1;
-	SERVICE_AUTO_START          = $2;
-	SERVICE_DEMAND_START        = $3;
-	SERVICE_DISABLED            = $4;
-	SERVICE_DELETE              = $10000;
-	SERVICE_CONTROL_STOP		= $1;
-	SERVICE_CONTROL_PAUSE		= $2;
-	SERVICE_CONTROL_CONTINUE	= $3;
-	SERVICE_CONTROL_INTERROGATE = $4;
-	SERVICE_STOPPED				= $1;
-	SERVICE_START_PENDING       = $2;
-	SERVICE_STOP_PENDING        = $3;
-	SERVICE_RUNNING             = $4;
-	SERVICE_CONTINUE_PENDING    = $5;
-	SERVICE_PAUSE_PENDING       = $6;
-	SERVICE_PAUSED              = $7;
+  NO_ERROR = 0;
+  STANDARD_RIGHTS_REQUIRED = $F0000;
 
-// #######################################################################################
-// nt based service utilities
-// #######################################################################################
-function OpenSCManager(lpMachineName, lpDatabaseName: string; dwDesiredAccess :cardinal): HANDLE;
-external 'OpenSCManagerA@advapi32.dll stdcall';
+  //
+  // Service Control Manager object specific access types
+  //
+  SC_MANAGER_CONNECT = $0001;
+  SC_MANAGER_CREATE_SERVICE = $0002;
+  SC_MANAGER_ENUMERATE_SERVICE = $0004;
+  SC_MANAGER_LOCK = $0008;
+  SC_MANAGER_QUERY_LOCK_STATUS = $0010;
+  SC_MANAGER_MODIFY_BOOT_CONFIG = $0020;
 
-function OpenService(hSCManager :HANDLE;lpServiceName: string; dwDesiredAccess :cardinal): HANDLE;
-external 'OpenServiceA@advapi32.dll stdcall';
+  SC_MANAGER_ALL_ACCESS  =
+    (STANDARD_RIGHTS_REQUIRED +
+    SC_MANAGER_CONNECT +
+    SC_MANAGER_CREATE_SERVICE +
+    SC_MANAGER_ENUMERATE_SERVICE +
+    SC_MANAGER_LOCK +
+    SC_MANAGER_QUERY_LOCK_STATUS +
+    SC_MANAGER_MODIFY_BOOT_CONFIG);
 
-function CloseServiceHandle(hSCObject :HANDLE): boolean;
-external 'CloseServiceHandle@advapi32.dll stdcall';
+  //
+  // Service Types (Bit Mask)
+  //
+  SERVICE_KERNEL_DRIVER = $00000001;
+  SERVICE_FILE_SYSTEM_DRIVER = $00000002;
+  SERVICE_ADAPTER = $00000004;
+  SERVICE_RECOGNIZER_DRIVER = $00000008;
 
-function CreateService(hSCManager :HANDLE;lpServiceName, lpDisplayName: string;dwDesiredAccess,dwServiceType,dwStartType,dwErrorControl: cardinal;lpBinaryPathName,lpLoadOrderGroup: String; lpdwTagId : cardinal;lpDependencies,lpServiceStartName,lpPassword :string): cardinal;
-external 'CreateServiceA@advapi32.dll stdcall';
+  SERVICE_DRIVER =
+    (SERVICE_KERNEL_DRIVER +
+     SERVICE_FILE_SYSTEM_DRIVER +
+     SERVICE_RECOGNIZER_DRIVER);
 
-function DeleteService(hService :HANDLE): boolean;
-external 'DeleteService@advapi32.dll stdcall';
+  SERVICE_WIN32_OWN_PROCESS = $00000010;
+  SERVICE_WIN32_SHARE_PROCESS = $00000020;
+  SERVICE_WIN32 =
+    (SERVICE_WIN32_OWN_PROCESS +
+    SERVICE_WIN32_SHARE_PROCESS);
 
-function StartNTService(hService :HANDLE;dwNumServiceArgs : cardinal;lpServiceArgVectors : cardinal) : boolean;
-external 'StartServiceA@advapi32.dll stdcall';
+  SERVICE_INTERACTIVE_PROCESS = $00000100;
 
-function ControlService(hService :HANDLE; dwControl :cardinal;var ServiceStatus :SERVICE_STATUS) : boolean;
-external 'ControlService@advapi32.dll stdcall';
+  SERVICE_TYPE_ALL =
+    (SERVICE_WIN32 +
+    SERVICE_ADAPTER +
+    SERVICE_DRIVER +
+    SERVICE_INTERACTIVE_PROCESS);
 
-function QueryServiceStatus(hService :HANDLE;var ServiceStatus :SERVICE_STATUS) : boolean;
-external 'QueryServiceStatus@advapi32.dll stdcall';
+  //
+  // Start Type
+  //
+  SERVICE_BOOT_START = $00000000;
+  SERVICE_SYSTEM_START = $00000001;
+  SERVICE_AUTO_START = $00000002;
+  SERVICE_DEMAND_START = $00000003;
+  SERVICE_DISABLED = $00000004;
 
-function QueryServiceStatusEx(hService :HANDLE;ServiceStatus :SERVICE_STATUS) : boolean;
-external 'QueryServiceStatus@advapi32.dll stdcall';
+  //
+  // Error control type
+  //
+  SERVICE_ERROR_IGNORE = $00000000;
+  SERVICE_ERROR_NORMAL = $00000001;
+  SERVICE_ERROR_SEVERE = $00000002;
+  SERVICE_ERROR_CRITICAL = $00000003;
 
-function OpenServiceManager() : HANDLE;
+  //
+  // Service object specific access type
+  //
+  SERVICE_QUERY_CONFIG = $0001;
+  SERVICE_CHANGE_CONFIG = $0002;
+  SERVICE_QUERY_STATUS = $0004;
+  SERVICE_ENUMERATE_DEPENDENTS = $0008;
+  SERVICE_START= $0010;
+  SERVICE_STOP= $0020;
+  SERVICE_PAUSE_CONTINUE = $0040;
+  SERVICE_INTERROGATE = $0080;
+  SERVICE_USER_DEFINED_CONTROL = $0100;
+
+  SERVICE_ALL_ACCESS =
+    (STANDARD_RIGHTS_REQUIRED +
+    SERVICE_QUERY_CONFIG +
+    SERVICE_CHANGE_CONFIG +
+    SERVICE_QUERY_STATUS +
+    SERVICE_ENUMERATE_DEPENDENTS +
+    SERVICE_START +
+    SERVICE_STOP +
+    SERVICE_PAUSE_CONTINUE +
+    SERVICE_INTERROGATE +
+    SERVICE_USER_DEFINED_CONTROL);
+
+  //
+  // Controls
+  //
+  SERVICE_CONTROL_STOP = $00000001;
+  SERVICE_CONTROL_PAUSE = $00000002;
+  SERVICE_CONTROL_CONTINUE = $00000003;
+  SERVICE_CONTROL_INTERROGATE = $00000004;
+
+  //
+  // Status
+  //
+  SERVICE_CONTINUE_PENDING = $00000005;
+  SERVICE_PAUSE_PENDING = $00000006;
+  SERVICE_PAUSED = $00000007;
+  SERVICE_RUNNING = $00000004;
+  SERVICE_START_PENDING = $00000002;
+  SERVICE_STOP_PENDING = $00000003;
+  SERVICE_STOPPED = $00000001;
+
+
+  //
+  //  Error codes
+  //
+  ERROR_DEPENDENT_SERVICES_RUNNING = 1051;
+  ERROR_INVALID_SERVICE_CONTROL = 1052;
+  ERROR_SERVICE_REQUEST_TIMEOUT = 1053;
+  ERROR_SERVICE_NO_THREAD = 1054;
+  ERROR_SERVICE_DATABASE_LOCKED = 1055;
+  ERROR_SERVICE_ALREADY_RUNNING = 1056;
+  ERROR_INVALID_SERVICE_ACCOUNT = 1057;
+  ERROR_SERVICE_DISABLED = 1058;
+  ERROR_CIRCULAR_DEPENDENCY = 1059;
+  ERROR_SERVICE_DOES_NOT_EXIST = 1060;
+  ERROR_SERVICE_CANNOT_ACCEPT_CTRL = 1061;
+  ERROR_SERVICE_NOT_ACTIVE = 1062;
+  ERROR_FAILED_SERVICE_CONTROLLER_CONNECT = 1063;
+  ERROR_EXCEPTION_IN_SERVICE = 1064;
+  ERROR_DATABASE_DOES_NOT_EXIST = 1065;
+  ERROR_SERVICE_SPECIFIC_ERROR = 1066;
+  ERROR_PROCESS_ABORTED = 1067;
+  ERROR_SERVICE_DEPENDENCY_FAIL = 1068;
+  ERROR_SERVICE_LOGON_FAILED = 1069;
+  ERROR_SERVICE_START_HANG = 1070;
+  ERROR_INVALID_SERVICE_LOCK = 1071;
+  ERROR_SERVICE_MARKED_FOR_DELETE = 1072;
+  ERROR_SERVICE_EXISTS = 1073;
+
+
+
+function OpenSCManager(lpMachineName: string; lpDatabaseName: string; dwDesiredAccess: Longword): Longword;
+  external 'OpenSCManagerW@advapi32.dll stdcall';
+
+//
+// lpServiceName is the service name, not the service display name
+//
+
+function OpenService(hSCManager: Longword; lpServiceName: string; dwDesiredAccess: Longword): Longword;
+  external 'OpenServiceW@advapi32.dll stdcall';
+
+function StartService(hService: Longword; dwNumServiceArgs: Longword; lpServiceArgVectors: string): Longword;
+  external 'StartServiceW@advapi32.dll stdcall';
+
+function CloseServiceHandle(hSCObject: Longword): Longword;
+  external 'CloseServiceHandle@advapi32.dll stdcall';
+
+function ControlService(hService: Longword; dwControl: Longword; var lpServiceStatus: _SERVICE_STATUS): Longword;
+  external 'ControlService@advapi32.dll stdcall';
+
+function CreateService(hSCManager: Longword;
+  lpServiceName: string;
+  lpDisplayName: string;
+  dwDesiredAccess: Longword;
+  dwServiceType: Longword;
+  dwStartType: Longword;
+  dwErrorControl: Longword;
+  lpBinaryPathName: string;
+  lpLoadOrderGroup: string;
+  lpdwTagId: Longword;
+  lpDependencies: string;
+  lpServiceStartName: string;
+  lpPassword: string): Longword;
+  external 'CreateServiceW@advapi32.dll stdcall';
+
+function DeleteService(hService: Longword): Longword;
+  external 'DeleteService@advapi32.dll stdcall';
+
+function LockServiceDatabase(hSCManager: Longword): Longword;
+  external 'LockServiceDatabase@advapi32.dll stdcall';
+
+function UnlockServiceDatabase(ScLock: Longword): Longword;
+  external 'UnlockServiceDatabase@advapi32.dll stdcall';
+
+
+function SMCreateService(AServiceName, ADisplayName, AFileName: string;
+  AStartType: Longword; AUser, APassword: string; Interactive: Boolean; IgnoreExisting: Boolean): Boolean;
+var
+  SCMHandle: Longword;
+  ServiceHandle: Longword;
+  ServiceType: Longword;
+  dwTag: Longword;
+  Error: Integer;
 begin
-	if UsingWinNT() = true then begin
-		Result := OpenSCManager('','ServicesActive',SC_MANAGER_ALL_ACCESS);
-		if Result = 0 then
-			MsgBox('The Service<anager is not available', mbError, MB_OK)
-	end
-	else begin
-			MsgBox('Only NT based systems support services', mbError, MB_OK)
-			Result := 0;
-	end
+  Result := False;
+  dwTag := 0;
+  ServiceType := SERVICE_WIN32_OWN_PROCESS;
+  try
+    SCMHandle := OpenSCManager('', '', SC_MANAGER_ALL_ACCESS);
+    if SCMHandle = 0 then
+      RaiseException('OpenSCManager: ' + AServiceName + ' ' + SysErrorMessage(DLLGetLastError));
+    try
+      if AUser = '' then
+      begin
+        if Interactive then
+          ServiceType := ServiceType + SERVICE_INTERACTIVE_PROCESS;
+        APassword := '';
+      end;
+      ServiceHandle := CreateService(SCMHandle, AServiceName, ADisplayName, SERVICE_ALL_ACCESS, ServiceType,
+        AStartType, SERVICE_ERROR_NORMAL, AFileName, '', 0, '', AUser, APassword);
+      if ServiceHandle = 0 then
+      begin
+        Error := DLLGetLastError;
+        if IgnoreExisting and (Error = ERROR_SERVICE_EXISTS) then
+          Exit
+        else
+          RaiseException('CreateService: ' + AServiceName + ' ' + SysErrorMessage(Error));
+      end;
+      Result := True;
+    finally
+      if ServiceHandle <> 0 then
+        CloseServiceHandle(ServiceHandle);
+    end;
+  finally
+    if SCMHandle <> 0 then
+      CloseServiceHandle(SCMHandle);
+  end;
 end;
 
-function IsServiceInstalled(ServiceName: string) : boolean;
+function WaitForService(ServiceHandle: Longword; AStatus: Longword): Boolean;
 var
-	hSCM	: HANDLE;
-	hService: HANDLE;
+  PendingStatus: Longword;
+  ServiceStatus: _SERVICE_STATUS;
+  Error: Integer;
 begin
-	hSCM := OpenServiceManager();
-	Result := false;
-	if hSCM <> 0 then begin
-		hService := OpenService(hSCM,ServiceName,SERVICE_QUERY_CONFIG);
-        if hService <> 0 then begin
-            Result := true;
-            CloseServiceHandle(hService)
-		end;
-        CloseServiceHandle(hSCM)
-	end
+  Result := False;
+
+  case AStatus of
+    SERVICE_RUNNING: PendingStatus := SERVICE_START_PENDING;
+    SERVICE_STOPPED: PendingStatus := SERVICE_STOP_PENDING;
+  end;
+
+  repeat
+    if ControlService(ServiceHandle, SERVICE_CONTROL_INTERROGATE, ServiceStatus) = 0 then
+    begin
+      Error := DLLGetLastError;
+      RaiseException('ControlService: ' + SysErrorMessage(Error));
+    end;
+    if ServiceStatus.dwWin32ExitCode <> 0 then
+      Break;
+    Result := ServiceStatus.dwCurrentState = AStatus;
+    if not Result and (ServiceStatus.dwCurrentState = PendingStatus) then
+      Sleep(ServiceStatus.dwWaitHint)
+    else
+      Break;
+  until Result;
 end;
 
-function InstallService(FileName, ServiceName, DisplayName, Description : string;ServiceType,StartType :cardinal) : boolean;
+procedure SMStopService(AService: string; Wait, IgnoreStopped: Boolean);
 var
-	hSCM	: HANDLE;
-	hService: HANDLE;
+  ServiceStatus: _SERVICE_STATUS;
+  SCMHandle: Longword;
+  ServiceHandle: Longword;
+  Error: Integer;
 begin
-	hSCM := OpenServiceManager();
-	Result := false;
-	if hSCM <> 0 then begin
-		hService := CreateService(hSCM,ServiceName,DisplayName,SERVICE_ALL_ACCESS,ServiceType,StartType,0,FileName,'',0,'','','');
-		if hService <> 0 then begin
-			Result := true;
-			// Win2K & WinXP supports aditional description text for services
-			if Description<> '' then
-				RegWriteStringValue(HKLM,'System\CurrentControlSet\Services' + ServiceName,'Description',Description);
-			CloseServiceHandle(hService)
-		end;
-        CloseServiceHandle(hSCM)
-	end
+  try
+    SCMHandle := OpenSCManager('', '', SC_MANAGER_ALL_ACCESS);
+    if SCMHandle = 0 then
+      RaiseException('OpenSCManager: ' + AService + ' ' + SysErrorMessage(DLLGetLastError));
+    try
+      ServiceHandle := OpenService(SCMHandle, AService, SERVICE_ALL_ACCESS);
+      if ServiceHandle = 0 then
+        RaiseException('OpenService: ' + AService + ' ' + SysErrorMessage(DLLGetLastError));
+      try
+        if ControlService(ServiceHandle, SERVICE_CONTROL_STOP, ServiceStatus) = 0 then
+        begin
+          Error := DLLGetLastError;
+          if IgnoreStopped and (Error = ERROR_SERVICE_NOT_ACTIVE) then
+            Exit
+          else
+            RaiseException('ControlService: ' + AService + ' ' + SysErrorMessage(Error));
+          if Wait then
+            WaitForService(ServiceHandle, SERVICE_STOPPED);
+        end;
+      finally
+        if ServiceHandle <> 0 then
+          CloseServiceHandle(ServiceHandle);
+      end;
+    finally
+      if SCMHandle <> 0 then
+        CloseServiceHandle(SCMHandle);
+    end;
+  except
+    ShowExceptionMessage;
+  end;
 end;
 
-function RemoveService(ServiceName: string) : boolean;
+procedure SMStartService(AService: string; Wait, IgnoreStarted: Boolean);
 var
-	hSCM	: HANDLE;
-	hService: HANDLE;
+  SCMHandle: Longword;
+  ServiceHandle: Longword;
+  Error: Integer;
 begin
-	hSCM := OpenServiceManager();
-	Result := false;
-	if hSCM <> 0 then begin
-		hService := OpenService(hSCM,ServiceName,SERVICE_DELETE);
-        if hService <> 0 then begin
-            Result := DeleteService(hService);
-            CloseServiceHandle(hService)
-		end;
-        CloseServiceHandle(hSCM)
-	end
+  try
+    SCMHandle := OpenSCManager('', '', SC_MANAGER_ALL_ACCESS);
+    if SCMHandle = 0 then
+      RaiseException('OpenSCManager: ' + AService + ' ' + SysErrorMessage(DLLGetLastError));
+    try
+      ServiceHandle := OpenService(SCMHandle, AService, SERVICE_ALL_ACCESS);
+      if ServiceHandle = 0 then
+        RaiseException('OpenService: ' + AService + ' ' + SysErrorMessage(DLLGetLastError));
+      try
+        if StartService(ServiceHandle, 0, '') = 0 then
+        begin
+          Error := DLLGetLastError;
+          if IgnoreStarted and (Error = ERROR_SERVICE_ALREADY_RUNNING) then
+            Exit
+          else
+            RaiseException('StartService: ' + AService + ' ' + SysErrorMessage(Error));
+          if Wait then
+          begin
+            WaitForService(ServiceHandle, SERVICE_RUNNING);
+          end;
+        end;
+      finally
+        if ServiceHandle <> 0 then
+          CloseServiceHandle(ServiceHandle);
+      end;
+    finally
+      if SCMHandle <> 0 then
+        CloseServiceHandle(SCMHandle);
+    end;
+  except
+    ShowExceptionMessage;
+  end;
 end;
 
-function StartService(ServiceName: string) : boolean;
+procedure SMDeleteService(AService: string);
 var
-	hSCM	: HANDLE;
-	hService: HANDLE;
+  SCMHandle: Longword;
+  ServiceHandle: Longword;
 begin
-	hSCM := OpenServiceManager();
-	Result := false;
-	if hSCM <> 0 then begin
-		hService := OpenService(hSCM,ServiceName,SERVICE_START);
-        if hService <> 0 then begin
-        	Result := StartNTService(hService,0,0);
-            CloseServiceHandle(hService)
-		end;
-        CloseServiceHandle(hSCM)
-	end;
+  try
+    SCMHandle := OpenSCManager('', '', SC_MANAGER_ALL_ACCESS);
+    if SCMHandle = 0 then
+      RaiseException('OpenSCManager: ' + AService + ' ' + SysErrorMessage(DLLGetLastError));
+    try
+      ServiceHandle := OpenService(SCMHandle, AService, SERVICE_ALL_ACCESS);
+      if ServiceHandle = 0 then
+        RaiseException('OpenService: ' + AService + ' ' + SysErrorMessage(DLLGetLastError));
+      try
+        if DeleteService(ServiceHandle) = 0 then
+          RaiseException('StartService: ' + AService + ' ' + SysErrorMessage(DLLGetLastError));
+      finally
+        if ServiceHandle <> 0 then
+          CloseServiceHandle(ServiceHandle);
+      end;
+    finally
+      if SCMHandle <> 0 then
+        CloseServiceHandle(SCMHandle);
+    end;
+  except
+    ShowExceptionMessage;
+  end;
 end;
 
-function StopService(ServiceName: string) : boolean;
+function IsServiceInstalled(AService: string): Boolean;
 var
-	hSCM	: HANDLE;
-	hService: HANDLE;
-	Status	: SERVICE_STATUS;
+  SCMHandle: Longword;
+  ServiceHandle: Longword;
+  Error: Integer;
 begin
-	hSCM := OpenServiceManager();
-	Result := false;
-	if hSCM <> 0 then begin
-		hService := OpenService(hSCM,ServiceName,SERVICE_STOP);
-        if hService <> 0 then begin
-        	Result := ControlService(hService,SERVICE_CONTROL_STOP,Status);
-            CloseServiceHandle(hService)
-		end;
-        CloseServiceHandle(hSCM)
-	end;
+  try
+    SCMHandle := OpenSCManager('', '', SC_MANAGER_ALL_ACCESS);
+    if SCMHandle = 0 then
+      RaiseException('OpenSCManager: ' + AService + ' ' + SysErrorMessage(DLLGetLastError));
+    try
+      ServiceHandle := OpenService(SCMHandle, AService, SERVICE_ALL_ACCESS);
+      try
+        if ServiceHandle = 0 then
+        begin
+          Error := DLLGetLastError;
+          if Error = ERROR_SERVICE_DOES_NOT_EXIST then
+            Result := False
+          else
+            RaiseException('OpenService: ' + AService + ' ' + SysErrorMessage(Error));
+        end
+        else
+          Result := True;
+      finally
+        if ServiceHandle <> 0 then
+          CloseServiceHandle(ServiceHandle);
+      end;
+    finally
+      if SCMHandle <> 0 then
+        CloseServiceHandle(SCMHandle);
+    end;
+  except
+    ShowExceptionMessage;
+  end;
+end;
+
+function SMQueryService(AService: string): Longword;
+var
+  ServiceStatus: _SERVICE_STATUS;
+  SCMHandle: Longword;
+  ServiceHandle: Longword;
+  Error: Integer;
+begin
+  Result := 0;
+  try
+    SCMHandle := OpenSCManager('', '', SC_MANAGER_ALL_ACCESS);
+    if SCMHandle = 0 then
+      RaiseException('OpenSCManager: ' + AService + ' ' + SysErrorMessage(DLLGetLastError));
+    try
+      ServiceHandle := OpenService(SCMHandle, AService, SERVICE_ALL_ACCESS);
+      if ServiceHandle = 0 then
+        RaiseException('OpenService: ' + AService + ' ' + SysErrorMessage(DLLGetLastError));
+      try
+        if ControlService(ServiceHandle, SERVICE_CONTROL_INTERROGATE, ServiceStatus) = 0 then
+        begin
+          Error := DLLGetLastError;
+          RaiseException('ControlService: ' + AService + ' ' + SysErrorMessage(Error));
+        end;
+        Result := ServiceStatus.dwCurrentState;
+      finally
+        if ServiceHandle <> 0 then
+          CloseServiceHandle(ServiceHandle);
+      end;
+    finally
+      if SCMHandle <> 0 then
+        CloseServiceHandle(SCMHandle);
+    end;
+  except
+    ShowExceptionMessage;
+  end;
 end;
 
 function IsServiceRunning(ServiceName: string) : boolean;
-var
-	hSCM	: HANDLE;
-	hService: HANDLE;
-	Status	: SERVICE_STATUS;
 begin
-	hSCM := OpenServiceManager();
-	Result := false;
-	if hSCM <> 0 then begin
-		hService := OpenService(hSCM,ServiceName,SERVICE_QUERY_STATUS);
-    	if hService <> 0 then begin
-			if QueryServiceStatus(hService,Status) then begin
-				Result :=(Status.dwCurrentState = SERVICE_RUNNING)
-        	end;
-            CloseServiceHandle(hService)
-		    end;
-        CloseServiceHandle(hSCM)
-	end
+  Result :=(SMQueryService(ServiceName) = SERVICE_RUNNING)
 end;
+
 
 function InitializeSetup(): boolean;
 begin
   Result := True;
   if IsServiceRunning(ExpandConstant('{#ConstAppServiceName}')) then
-    if not StopService(ExpandConstant('{#ConstAppServiceName}')) then
-      begin
-        MsgBox('Setup failed to stop ' + ExpandConstant('{#ConstAppServiceName}') + ', setup cannot continue.',mbCriticalError, MB_OK);
-        Result := False;
-      end
+    SMStopService(ExpandConstant('{#ConstAppServiceName}'),true,true);
 end;
 
 procedure DeinitializeSetup();
@@ -237,11 +512,7 @@ function InitializeUninstall(): Boolean;
 begin
   Result := True;
   if IsServiceRunning(ExpandConstant('{#ConstAppServiceName}')) then
-    if not StopService(ExpandConstant('{#ConstAppServiceName}')) then
-      begin
-        MsgBox('Setup failed to stop ' + ExpandConstant('{#ConstAppServiceName}') + ', setup cannot continue.',mbCriticalError, MB_OK);
-        Result := False;
-      end
+    SMStopService(ExpandConstant('{#ConstAppServiceName}'),true,true);
 end;
 
 procedure DeinitializeUninstall();
@@ -251,5 +522,5 @@ end;
 
 procedure RemoveServiceFileInstall();
 begin
-  if IsServiceInstalled(ExpandConstant('{#ConstAppServiceName}')) then RemoveService(ExpandConstant('{#ConstAppServiceName}'))
+  if IsServiceInstalled(ExpandConstant('{#ConstAppServiceName}')) then SMDeleteService(ExpandConstant('{#ConstAppServiceName}'))
 end;
