@@ -24,5 +24,4 @@ Other examples
     - Great for routers that have limited port forward abilities
 
 
-Installation Downloads
-https://www.littleearthsolutions.net/?page_id=126
+
